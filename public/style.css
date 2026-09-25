@@ -1,15 +1,12 @@
 :root {
-  --cor-fundo: #0f172a;
-  --cor-superficie: #1e293b;
-  --cor-borda: #334155;
-  --cor-texto: #e2e8f0;
-  --cor-texto-fraco: #94a3b8;
-  --cor-primaria: #3b82f6;
-  --cor-primaria-hover: #2563eb;
-  --cor-perigo: #ef4444;
-  --cor-disponivel: #22c55e;
-  --cor-reservado: #eab308;
-  --cor-vendido: #64748b;
+  --cor-fundo: #ffffff;
+  --cor-superficie: #ffffff;
+  --cor-borda: #e2e2e2;
+  --cor-texto: #111111;
+  --cor-texto-fraco: #737373;
+  --cor-preta: #111111;
+  --cor-preta-hover: #000000;
+  --cor-fundo-suave: #f7f7f7;
 }
 
 * { box-sizing: border-box; }
@@ -29,7 +26,7 @@ body {
   border-bottom: 1px solid var(--cor-borda);
 }
 
-.topo h1 { font-size: 1.25rem; margin: 0; }
+.topo h1 { font-size: 1.15rem; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
 
 main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
 
@@ -43,35 +40,42 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
   background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
   color: var(--cor-texto);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
+}
+.filtros input:focus, .filtros select:focus, .campos input:focus, .campos select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--cor-preta);
 }
 
 #filtro-busca { flex: 1; }
 
 .botao {
-  background: var(--cor-superficie);
+  background: #ffffff;
   border: 1px solid var(--cor-borda);
   color: var(--cor-texto);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 0.55rem 1rem;
   cursor: pointer;
   font-size: 0.95rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
-.botao:hover { border-color: var(--cor-primaria); }
-.botao-primario { background: var(--cor-primaria); border-color: var(--cor-primaria); color: white; }
-.botao-primario:hover { background: var(--cor-primaria-hover); }
-.botao-perigo { color: var(--cor-perigo); }
+.botao:hover { border-color: var(--cor-preta); }
+.botao-primario { background: var(--cor-preta); border-color: var(--cor-preta); color: #ffffff; }
+.botao-primario:hover { background: var(--cor-preta-hover); border-color: var(--cor-preta-hover); }
+.botao-perigo { color: var(--cor-texto); }
+.botao-perigo:hover { border-color: #111111; background: #111111; color: #ffffff; }
 
 .mensagem {
   padding: 0.75rem 1rem;
-  border-radius: 8px;
-  background: var(--cor-superficie);
+  border-radius: 6px;
+  background: var(--cor-fundo-suave);
   border: 1px solid var(--cor-borda);
   margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
-.mensagem.erro { border-color: var(--cor-perigo); color: #fca5a5; }
+.mensagem.erro { border-color: var(--cor-texto); font-weight: 600; }
 
 .grade {
   display: grid;
@@ -82,7 +86,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
 .card {
   background: var(--cor-superficie);
   border: 1px solid var(--cor-borda);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -92,7 +96,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  background: #0b1220;
+  background: var(--cor-fundo-suave);
 }
 .card .sem-imagem {
   width: 100%;
@@ -101,28 +105,30 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
   align-items: center;
   justify-content: center;
   color: var(--cor-texto-fraco);
-  background: #0b1220;
+  background: var(--cor-fundo-suave);
   font-size: 0.85rem;
 }
 
 .card-corpo { padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
 .card-titulo { font-weight: 600; font-size: 1.05rem; }
 .card-sub { color: var(--cor-texto-fraco); font-size: 0.85rem; }
-.card-preco { font-weight: 600; color: var(--cor-primaria); }
+.card-preco { font-weight: 600; color: var(--cor-texto); }
 .card-descricao { font-size: 0.85rem; color: var(--cor-texto-fraco); flex: 1; white-space: pre-wrap; }
 
 .status-badge {
   display: inline-block;
   align-self: flex-start;
-  font-size: 0.75rem;
-  padding: 0.15rem 0.55rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  color: #0f172a;
   font-weight: 600;
+  border: 1px solid var(--cor-preta);
 }
-.status-disponivel { background: var(--cor-disponivel); }
-.status-reservado { background: var(--cor-reservado); }
-.status-vendido { background: var(--cor-vendido); color: white; }
+.status-disponivel { background: var(--cor-preta); color: #ffffff; }
+.status-reservado { background: #ffffff; color: var(--cor-preta); }
+.status-vendido { background: var(--cor-fundo-suave); color: var(--cor-texto-fraco); border-color: var(--cor-borda); }
 
 .card-acoes { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
 .card-acoes .botao { flex: 1; padding: 0.4rem 0.5rem; font-size: 0.85rem; }
@@ -130,15 +136,15 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
 .vazio { color: var(--cor-texto-fraco); text-align: center; margin-top: 3rem; }
 
 dialog {
-  background: var(--cor-superficie);
+  background: #ffffff;
   color: var(--cor-texto);
   border: 1px solid var(--cor-borda);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1.5rem;
   max-width: 560px;
   width: 92vw;
 }
-dialog::backdrop { background: rgba(0,0,0,0.6); }
+dialog::backdrop { background: rgba(0,0,0,0.5); }
 
 .campos {
   display: grid;
@@ -157,7 +163,8 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
 textarea { resize: vertical; font-family: inherit; }
 
 .preview-wrap { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-.preview-wrap img { width: 90px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid var(--cor-borda); }
+.preview-wrap[hidden] { display: none; }
+.preview-wrap img { width: 90px; height: 68px; object-fit: cover; border-radius: 6px; border: 1px solid var(--cor-borda); }
 .remover-imagem { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--cor-texto-fraco); }
 
 .acoes-form { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.5rem; }
