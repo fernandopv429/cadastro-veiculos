@@ -4,7 +4,7 @@ const { pool } = require("./db");
 const pocketbase = require("./pocketbase");
 const { basicAuth } = require("./auth");
 
-const MAX_IMAGENS = 10;
+const MAX_IMAGENS = 20;
 
 const upload = multer({
   storage: multer.memoryStorage(),

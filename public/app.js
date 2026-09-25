@@ -10,7 +10,7 @@ const galeriaAtual = document.getElementById("galeria-atual");
 const galeriaNovas = document.getElementById("galeria-novas");
 
 const STATUS_LABEL = { disponivel: "Disponível", reservado: "Reservado", vendido: "Vendido" };
-const MAX_IMAGENS = 10;
+const MAX_IMAGENS = 20;
 
 let debounceBusca = null;
 let imagensParaRemover = new Set();
