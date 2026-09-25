@@ -5,10 +5,16 @@ const dialogo = document.getElementById("dialogo-form");
 const form = document.getElementById("form-veiculo");
 const filtroBusca = document.getElementById("filtro-busca");
 const filtroStatus = document.getElementById("filtro-status");
+const campoImagens = document.getElementById("campo-imagens");
+const galeriaAtual = document.getElementById("galeria-atual");
+const galeriaNovas = document.getElementById("galeria-novas");
 
 const STATUS_LABEL = { disponivel: "Disponível", reservado: "Reservado", vendido: "Vendido" };
+const MAX_IMAGENS = 10;
 
 let debounceBusca = null;
+let imagensParaRemover = new Set();
+let arquivosNovos = [];
 
 function formataPreco(valor) {
   if (valor === null || valor === undefined) return null;
@@ -39,12 +45,19 @@ async function api(caminho, opcoes = {}) {
   return resp.json();
 }
 
+function escapeHtml(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto;
+  return div.innerHTML;
+}
+
 function card(v) {
   const el = document.createElement("div");
   el.className = "card";
 
-  const img = v.imagem_url
-    ? `<img class="imagem" src="${v.imagem_url}" alt="${v.marca} ${v.modelo}" loading="lazy" />`
+  const primeira = v.imagens[0];
+  const img = primeira
+    ? `<div class="imagem-wrap"><img class="imagem" src="${primeira.url}" alt="${v.marca} ${v.modelo}" loading="lazy" />${v.imagens.length > 1 ? `<span class="badge-fotos">+${v.imagens.length - 1}</span>` : ""}</div>`
     : `<div class="sem-imagem">sem imagem</div>`;
 
   const preco = formataPreco(v.preco);
@@ -69,12 +82,6 @@ function card(v) {
   return el;
 }
 
-function escapeHtml(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}
-
 async function carrega() {
   const params = new URLSearchParams();
   if (filtroBusca.value.trim()) params.set("busca", filtroBusca.value.trim());
@@ -90,10 +97,50 @@ async function carrega() {
   }
 }
 
+function renderizaGaleriaAtual(imagens) {
+  galeriaAtual.innerHTML = "";
+  imagens
+    .filter((img) => !imagensParaRemover.has(img.id))
+    .forEach((img) => {
+      const item = document.createElement("div");
+      item.className = "galeria-item";
+      item.innerHTML = `<img src="${img.url}" alt="imagem do veículo" /><button type="button" class="galeria-remover" title="remover esta imagem">×</button>`;
+      item.querySelector(".galeria-remover").addEventListener("click", () => {
+        imagensParaRemover.add(img.id);
+        renderizaGaleriaAtual(imagens);
+      });
+      galeriaAtual.appendChild(item);
+    });
+}
+
+function sincronizaInputImagens() {
+  const dt = new DataTransfer();
+  arquivosNovos.forEach((arquivo) => dt.items.add(arquivo));
+  campoImagens.files = dt.files;
+}
+
+function renderizaGaleriaNovas() {
+  galeriaNovas.innerHTML = "";
+  arquivosNovos.forEach((arquivo, indice) => {
+    const url = URL.createObjectURL(arquivo);
+    const item = document.createElement("div");
+    item.className = "galeria-item";
+    item.innerHTML = `<img src="${url}" alt="nova imagem" /><button type="button" class="galeria-remover" title="remover">×</button>`;
+    item.querySelector(".galeria-remover").addEventListener("click", () => {
+      arquivosNovos.splice(indice, 1);
+      sincronizaInputImagens();
+      renderizaGaleriaNovas();
+    });
+    galeriaNovas.appendChild(item);
+  });
+}
+
 function abreFormulario(v) {
   form.reset();
-  document.getElementById("preview-wrap").hidden = true;
-  document.getElementById("campo-remover-imagem").checked = false;
+  imagensParaRemover = new Set();
+  arquivosNovos = [];
+  galeriaAtual.innerHTML = "";
+  galeriaNovas.innerHTML = "";
 
   if (v) {
     document.getElementById("form-titulo").textContent = "Editar veículo";
@@ -107,10 +154,7 @@ function abreFormulario(v) {
     document.getElementById("campo-quilometragem").value = v.quilometragem ?? "";
     document.getElementById("campo-status").value = v.status || "disponivel";
     document.getElementById("campo-descricao").value = v.descricao || "";
-    if (v.imagem_url) {
-      document.getElementById("preview-imagem").src = v.imagem_url;
-      document.getElementById("preview-wrap").hidden = false;
-    }
+    renderizaGaleriaAtual(v.imagens);
   } else {
     document.getElementById("form-titulo").textContent = "Novo veículo";
     document.getElementById("campo-id").value = "";
@@ -132,19 +176,19 @@ async function excluir(v) {
 document.getElementById("btn-novo").addEventListener("click", () => abreFormulario(null));
 document.getElementById("btn-cancelar").addEventListener("click", () => dialogo.close());
 
-document.getElementById("campo-imagem").addEventListener("change", (ev) => {
-  const arquivo = ev.target.files[0];
-  if (!arquivo) return;
-  const url = URL.createObjectURL(arquivo);
-  document.getElementById("preview-imagem").src = url;
-  document.getElementById("preview-wrap").hidden = false;
-  document.getElementById("campo-remover-imagem").checked = false;
+campoImagens.addEventListener("change", (ev) => {
+  arquivosNovos = arquivosNovos.concat(Array.from(ev.target.files)).slice(0, MAX_IMAGENS);
+  sincronizaInputImagens();
+  renderizaGaleriaNovas();
 });
 
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const id = document.getElementById("campo-id").value;
   const dados = new FormData(form);
+  if (imagensParaRemover.size) {
+    dados.set("remover_imagens", JSON.stringify([...imagensParaRemover]));
+  }
 
   try {
     if (id) {

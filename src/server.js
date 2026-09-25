@@ -44,6 +44,9 @@ app.use((err, req, res, next) => {
   if (err && err.code === "LIMIT_FILE_SIZE") {
     return res.status(400).json({ error: "imagem maior que o limite de 10MB" });
   }
+  if (err && err.code === "LIMIT_FILE_COUNT") {
+    return res.status(400).json({ error: "no máximo 10 imagens por veículo" });
+  }
   console.error("  erro não tratado:", err);
   res.status(500).json({ error: "erro interno" });
 });

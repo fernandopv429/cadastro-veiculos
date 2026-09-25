@@ -55,13 +55,15 @@
       <textarea name="descricao" id="campo-descricao" rows="4" maxlength="4000"></textarea>
     </label>
 
-    <label class="campo-largo">Imagem
-      <input name="imagem" id="campo-imagem" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
-    </label>
-    <div id="preview-wrap" class="preview-wrap" hidden>
-      <img id="preview-imagem" alt="Prévia da imagem" />
-      <label class="remover-imagem"><input type="checkbox" name="remover_imagem" id="campo-remover-imagem" value="true" /> remover imagem atual</label>
+    <div class="campo-largo">
+      <span>Imagens atuais</span>
+      <div id="galeria-atual" class="galeria-atual"></div>
     </div>
+
+    <label class="campo-largo">Adicionar imagens (até 10 no total)
+      <input name="imagens" id="campo-imagens" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple />
+    </label>
+    <div id="galeria-novas" class="galeria-atual"></div>
 
     <div class="acoes-form">
       <button type="button" id="btn-cancelar" class="botao">Cancelar</button>
