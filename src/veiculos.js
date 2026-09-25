@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { pool } = require("./db");
 const pocketbase = require("./pocketbase");
+const { basicAuth } = require("./auth");
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -48,8 +49,11 @@ function serializa(linha) {
   };
 }
 
+// GET é público de propósito: dados e fotos dos veículos precisam ficar
+// livres para scraping por bots/integrações. CORS liberado só para leitura.
 router.get("/", async (req, res, next) => {
   try {
+    res.set("Access-Control-Allow-Origin", "*");
     const { busca, status } = req.query;
     const condicoes = [];
     const valores = [];
@@ -76,6 +80,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
+    res.set("Access-Control-Allow-Origin", "*");
     const { rows } = await pool.query("SELECT * FROM veiculos WHERE id = $1", [req.params.id]);
     if (!rows.length) return res.status(404).json({ error: "veículo não encontrado" });
     res.json(serializa(rows[0]));
@@ -84,7 +89,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", upload.single("imagem"), async (req, res, next) => {
+router.post("/", basicAuth, upload.single("imagem"), async (req, res, next) => {
   try {
     const { marca, modelo } = req.body;
     if (!marca || !modelo) {
@@ -125,7 +130,7 @@ router.post("/", upload.single("imagem"), async (req, res, next) => {
   }
 });
 
-router.put("/:id", upload.single("imagem"), async (req, res, next) => {
+router.put("/:id", basicAuth, upload.single("imagem"), async (req, res, next) => {
   try {
     const { rows: existentes } = await pool.query("SELECT * FROM veiculos WHERE id = $1", [req.params.id]);
     if (!existentes.length) return res.status(404).json({ error: "veículo não encontrado" });
@@ -184,7 +189,7 @@ router.put("/:id", upload.single("imagem"), async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", basicAuth, async (req, res, next) => {
   try {
     const { rows } = await pool.query("DELETE FROM veiculos WHERE id = $1 RETURNING *", [req.params.id]);
     if (!rows.length) return res.status(404).json({ error: "veículo não encontrado" });

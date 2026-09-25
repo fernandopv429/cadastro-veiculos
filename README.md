@@ -35,18 +35,22 @@ public/         # painel (index.html, app.js, style.css)
 
 ## API
 
-Tudo em `/api/veiculos` exige Basic Auth.
+`GET` é público de propósito (com CORS liberado, `Access-Control-Allow-Origin: *`):
+dados e fotos dos veículos precisam ficar livres para scraping por bots e
+integrações (ex.: agente de IA no n8n). Só escrita exige Basic Auth. O painel
+estático (`/`, `app.js`, `style.css`) também exige login — é a ferramenta de
+gestão, não o catálogo.
 
-| Método | Rota | Corpo |
-|---|---|---|
-| GET | `/api/veiculos?busca=&status=` | — |
-| GET | `/api/veiculos/:id` | — |
-| POST | `/api/veiculos` | `multipart/form-data`: marca*, modelo*, ano, placa, cor, preco, quilometragem, descricao, status, imagem (arquivo) |
-| PUT | `/api/veiculos/:id` | idem POST, todos os campos opcionais; `remover_imagem=true` para tirar a imagem sem enviar outra |
-| DELETE | `/api/veiculos/:id` | — |
+| Método | Rota | Auth | Corpo |
+|---|---|---|---|
+| GET | `/api/veiculos?busca=&status=` | pública | — |
+| GET | `/api/veiculos/:id` | pública | — |
+| POST | `/api/veiculos` | Basic Auth | `multipart/form-data`: marca*, modelo*, ano, placa, cor, preco, quilometragem, descricao, status, imagem (arquivo) |
+| PUT | `/api/veiculos/:id` | Basic Auth | idem POST, todos os campos opcionais; `remover_imagem=true` para tirar a imagem sem enviar outra |
+| DELETE | `/api/veiculos/:id` | Basic Auth | — |
 
-`GET /saude` não exige autenticação (é o alvo do health check do Coolify) e
-devolve se o Postgres e o PocketBase estão configurados e de pé.
+`GET /saude` também não exige autenticação (é o alvo do health check do
+Coolify) e devolve se o Postgres e o PocketBase estão configurados e de pé.
 
 ## Imagem no PocketBase
 

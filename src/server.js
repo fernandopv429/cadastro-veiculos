@@ -31,9 +31,11 @@ app.get("/saude", async (req, res) => {
   });
 });
 
-app.use(basicAuth);
+// Leitura pública de propósito: dados e fotos dos veículos precisam ficar
+// livres para scraping por bots/integrações. Só escrita (dentro do router)
+// e o painel exigem login.
 app.use("/api/veiculos", veiculosRouter);
-app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(basicAuth, express.static(path.join(__dirname, "..", "public")));
 
 app.use((err, req, res, next) => {
   if (err && err.message && err.message.includes("formato de imagem")) {
