@@ -1,0 +1,22 @@
+# Alternativa ao build pack "Dockerfile" do Coolify, e o jeito de rodar local.
+services:
+  cadastro-veiculos:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?defina DATABASE_URL}
+      POCKETBASE_URL: ${POCKETBASE_URL:-https://db.a5ecossistema.tech}
+      POCKETBASE_ADMIN_EMAIL: ${POCKETBASE_ADMIN_EMAIL:?defina POCKETBASE_ADMIN_EMAIL}
+      POCKETBASE_ADMIN_PASSWORD: ${POCKETBASE_ADMIN_PASSWORD:?defina POCKETBASE_ADMIN_PASSWORD}
+      POCKETBASE_COLLECTION: ${POCKETBASE_COLLECTION:-cadastro_veiculos_imagens}
+      ADMIN_USER: ${ADMIN_USER:?defina ADMIN_USER}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?defina ADMIN_PASSWORD}
+      PORT: 3000
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/saude', r => process.exit(r.statusCode===200?0:1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

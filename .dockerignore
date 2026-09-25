@@ -1,0 +1,6 @@
+node_modules
+.env
+.git
+*.log
+DEPLOY-COOLIFY.md
+README.md

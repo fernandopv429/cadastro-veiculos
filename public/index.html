@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cadastro de Veículos</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="topo">
+  <h1>Cadastro de Veículos</h1>
+  <button id="btn-novo" class="botao botao-primario">+ Novo veículo</button>
+</header>
+
+<main>
+  <div class="filtros">
+    <input id="filtro-busca" type="search" placeholder="Buscar por marca, modelo ou placa…" />
+    <select id="filtro-status">
+      <option value="">Todos os status</option>
+      <option value="disponivel">Disponível</option>
+      <option value="reservado">Reservado</option>
+      <option value="vendido">Vendido</option>
+    </select>
+  </div>
+
+  <p id="mensagem" class="mensagem" hidden></p>
+
+  <div id="grade" class="grade"></div>
+  <p id="vazio" class="vazio" hidden>Nenhum veículo cadastrado ainda.</p>
+</main>
+
+<dialog id="dialogo-form">
+  <form id="form-veiculo" enctype="multipart/form-data">
+    <h2 id="form-titulo">Novo veículo</h2>
+    <input type="hidden" name="id" id="campo-id" />
+
+    <div class="campos">
+      <label>Marca *<input name="marca" id="campo-marca" required maxlength="60" /></label>
+      <label>Modelo *<input name="modelo" id="campo-modelo" required maxlength="60" /></label>
+      <label>Ano<input name="ano" id="campo-ano" type="number" min="1900" max="2100" /></label>
+      <label>Placa<input name="placa" id="campo-placa" maxlength="10" /></label>
+      <label>Cor<input name="cor" id="campo-cor" maxlength="30" /></label>
+      <label>Preço (R$)<input name="preco" id="campo-preco" type="number" step="0.01" min="0" /></label>
+      <label>Quilometragem<input name="quilometragem" id="campo-quilometragem" type="number" min="0" /></label>
+      <label>Status
+        <select name="status" id="campo-status">
+          <option value="disponivel">Disponível</option>
+          <option value="reservado">Reservado</option>
+          <option value="vendido">Vendido</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="campo-largo">Descrição
+      <textarea name="descricao" id="campo-descricao" rows="4" maxlength="4000"></textarea>
+    </label>
+
+    <label class="campo-largo">Imagem
+      <input name="imagem" id="campo-imagem" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+    </label>
+    <div id="preview-wrap" class="preview-wrap" hidden>
+      <img id="preview-imagem" alt="Prévia da imagem" />
+      <label class="remover-imagem"><input type="checkbox" name="remover_imagem" id="campo-remover-imagem" value="true" /> remover imagem atual</label>
+    </div>
+
+    <div class="acoes-form">
+      <button type="button" id="btn-cancelar" class="botao">Cancelar</button>
+      <button type="submit" class="botao botao-primario">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>
